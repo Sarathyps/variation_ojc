@@ -1,0 +1,121 @@
+/* Global body styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  padding: 30px;
+}
+
+/* Main container */
+.container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 800px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+h2, h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* File input */
+input[type="file"] {
+  display: block;
+  margin: 15px 0;
+}
+
+/* Buttons */
+button {
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
+}
+
+button:disabled {
+  background-color: #d6d6d6;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background-color: #d6d6d6;
+}
+
+/* Output text block */
+pre, #output {
+  margin-top: 20px;
+  background: #f9f9f9;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+/* Cluster details block */
+#clusterDetails {
+  margin-top: 20px;
+  background: #f9f9f9;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  white-space: normal;
+}
+
+/* Per-item display inside clusterDetails */
+#clusterDetails .item-block {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 12px;
+  background-color: #fff;
+}
+
+/* Description block (no clamp) */
+.clamp-container {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 10px;
+  overflow: visible;
+  max-height: none;
+}
+
+.clamp-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Hide toggle link since it's not needed */
+.toggle-link {
+  display: none;
+}
+
+/* Image styling */
+img {
+  max-width: 150px;
+  margin-top: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+/* Action buttons: hidden by default */
+#acceptBtn,
+#rejectBtn,
+#closeBtn {
+  display: none;
+}
