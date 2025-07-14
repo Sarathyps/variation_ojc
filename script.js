@@ -31,7 +31,6 @@ document.getElementById('uploadBtn').addEventListener('click', () => {
 
     headers = jsonData[0];
 
-    // Parse all rows
     originalRows = jsonData.slice(1).map(row => {
       const obj = {};
       row.forEach((value, idx) => {
@@ -40,10 +39,8 @@ document.getElementById('uploadBtn').addEventListener('click', () => {
       return obj;
     });
 
-    // Filter rows not marked as 'Done'
     const activeRows = originalRows.filter(row => row.Actions?.toLowerCase() !== 'done');
 
-    // Group rows by product_id
     const grouped = {};
     activeRows.forEach(row => {
       const id = row.product_id;
@@ -88,41 +85,83 @@ function showCluster() {
 
   let detailsHTML = `
     <strong>Product ID:</strong> ${cluster.product_id}<br><br>
-    <strong>AI Web Title:</strong> ${cluster.ai_web_title}<br><br>
-    <strong>AI Amazon Title:</strong> ${cluster.ai_amzn_title}<br><br>
-    <strong>Description:</strong>
-    <div class="clamp-text">${cluster.ai_desc}</div><br><br>
+
+    <strong>AI Web Title:</strong><br>
+    <div id="webTitle" contenteditable="true" class="editable">${cluster.ai_web_title}</div><br>
+
+    <strong>AI Amazon Title:</strong><br>
+    <div id="amznTitle" contenteditable="true" class="editable">${cluster.ai_amzn_title}</div><br>
+
+    <strong>Description:</strong><br>
+    <div id="descText" contenteditable="true" class="editable">${cluster.ai_desc}</div><br><br>
+
     <strong>Items:</strong><br>
   `;
 
-  cluster.items.forEach(item => {
+  cluster.items.forEach((item, index) => {
     detailsHTML += `
-      <div class="item-block">
+      <div class="item-block" data-index="${index}">
         <strong>Item ID:</strong> ${item.item_id}<br>
-        <strong>Variation:</strong> ${item.variation}<br>
+        <strong>Variation:</strong><br>
+        <div contenteditable="true" class="editable variation-field" data-index="${index}">${item.variation}</div><br>
         ${item.image ? `<img src="${item.image}" alt="Image for ${item.item_id}">` : ''}
       </div>
     `;
   });
 
   document.getElementById('clusterDetails').innerHTML = detailsHTML;
-
   document.getElementById('acceptBtn').style.display = 'inline-block';
   document.getElementById('rejectBtn').style.display = 'inline-block';
   document.getElementById('closeBtn').style.display = 'inline-block';
 }
 
 document.getElementById('acceptBtn').addEventListener('click', () => {
+  saveEditsToCluster(clusters[currentClusterIndex]);
   approvedClusters.push(clusters[currentClusterIndex]);
   markRowsAsDone(clusters[currentClusterIndex]);
   nextCluster();
 });
 
 document.getElementById('rejectBtn').addEventListener('click', () => {
+  saveEditsToCluster(clusters[currentClusterIndex]);
   rejectedClusters.push(clusters[currentClusterIndex]);
   markRowsAsDone(clusters[currentClusterIndex]);
   nextCluster();
 });
+
+function saveEditsToCluster(cluster) {
+  // Save top-level edits
+  const editedWebTitle = document.getElementById('webTitle').innerText.trim();
+  const editedAmznTitle = document.getElementById('amznTitle').innerText.trim();
+  const editedDesc = document.getElementById('descText').innerText.trim();
+
+  cluster.ai_web_title = editedWebTitle;
+  cluster.ai_amzn_title = editedAmznTitle;
+  cluster.ai_desc = editedDesc;
+
+  // Save to all rows inside the cluster
+  cluster.rows.forEach(row => {
+    row.ai_web_title = editedWebTitle;
+    row.ai_amzn_title = editedAmznTitle;
+    row.ai_desc = editedDesc;
+  });
+
+  // Save item-level edits (variation only)
+  const variationFields = document.querySelectorAll('.variation-field');
+  variationFields.forEach(field => {
+    const index = field.getAttribute('data-index');
+    const editedVariation = field.innerText.trim();
+
+    cluster.items[index].variation = editedVariation;
+
+    // Also update corresponding rows
+    cluster.rows.forEach(row => {
+      if (row.item_id === cluster.items[index].item_id) {
+        row.Variation = editedVariation;
+      }
+    });
+  });
+}
 
 function markRowsAsDone(cluster) {
   cluster.rows.forEach(row => {
@@ -143,13 +182,11 @@ function nextCluster() {
 }
 
 document.getElementById('closeBtn').addEventListener('click', () => {
-  // 1. Update original file with "Done"
   const updatedWorkbook = XLSX.utils.book_new();
   const updatedSheet = XLSX.utils.json_to_sheet(originalRows, { header: headers });
   XLSX.utils.book_append_sheet(updatedWorkbook, updatedSheet, 'Updated Data');
   XLSX.writeFile(updatedWorkbook, 'Updated_Input_With_Actions.xlsx');
 
-  // 2. Generate Approved & Rejected sheets
   const flattenClusters = (clusterList) => {
     const flat = [];
     clusterList.forEach(cluster => {
@@ -175,7 +212,6 @@ document.getElementById('closeBtn').addEventListener('click', () => {
   XLSX.utils.book_append_sheet(outputWorkbook, rejectedSheet, 'Rejected');
   XLSX.writeFile(outputWorkbook, 'Approved_and_Rejected.xlsx');
 
-  // 3. Close the browser window after short delay
   setTimeout(() => {
     window.close();
   }, 2000);
