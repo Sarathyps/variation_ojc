@@ -60,7 +60,8 @@ document.getElementById('uploadBtn').addEventListener('click', () => {
       grouped[id].items.push({
         item_id: row.item_id || '',
         variation: row.Variation || '',
-        image: row.Images || ''
+        image: row.Images || '',
+        comment: row.Comment || ''
       });
 
       grouped[id].rows.push(row);
@@ -104,7 +105,9 @@ function showCluster() {
         <strong>Item ID:</strong> ${item.item_id}<br>
         <strong>Variation:</strong><br>
         <div contenteditable="true" class="editable variation-field" data-index="${index}">${item.variation}</div><br>
-        ${item.image ? `<img src="${item.image}" alt="Image for ${item.item_id}">` : ''}
+        ${item.image ? `<img src="${item.image}" alt="Image for ${item.item_id}">` : ''}<br>
+        <strong>Comment:</strong><br>
+        <textarea class="comment-field" data-index="${index}" rows="3" style="width: 100%;">${item.comment || ''}</textarea>
       </div>
     `;
   });
@@ -130,7 +133,6 @@ document.getElementById('rejectBtn').addEventListener('click', () => {
 });
 
 function saveEditsToCluster(cluster) {
-  // Save top-level edits
   const editedWebTitle = document.getElementById('webTitle').innerText.trim();
   const editedAmznTitle = document.getElementById('amznTitle').innerText.trim();
   const editedDesc = document.getElementById('descText').innerText.trim();
@@ -139,25 +141,35 @@ function saveEditsToCluster(cluster) {
   cluster.ai_amzn_title = editedAmznTitle;
   cluster.ai_desc = editedDesc;
 
-  // Save to all rows inside the cluster
   cluster.rows.forEach(row => {
     row.ai_web_title = editedWebTitle;
     row.ai_amzn_title = editedAmznTitle;
     row.ai_desc = editedDesc;
   });
 
-  // Save item-level edits (variation only)
   const variationFields = document.querySelectorAll('.variation-field');
+  const commentFields = document.querySelectorAll('.comment-field');
+
   variationFields.forEach(field => {
     const index = field.getAttribute('data-index');
     const editedVariation = field.innerText.trim();
-
     cluster.items[index].variation = editedVariation;
 
-    // Also update corresponding rows
     cluster.rows.forEach(row => {
       if (row.item_id === cluster.items[index].item_id) {
         row.Variation = editedVariation;
+      }
+    });
+  });
+
+  commentFields.forEach(field => {
+    const index = field.getAttribute('data-index');
+    const editedComment = field.value.trim();
+    cluster.items[index].comment = editedComment;
+
+    cluster.rows.forEach(row => {
+      if (row.item_id === cluster.items[index].item_id) {
+        row.Comment = editedComment;
       }
     });
   });
@@ -198,7 +210,8 @@ document.getElementById('closeBtn').addEventListener('click', () => {
           ai_desc: cluster.ai_desc,
           item_id: item.item_id,
           variation: item.variation,
-          image: item.image
+          image: item.image,
+          comment: item.comment || ''
         });
       });
     });
