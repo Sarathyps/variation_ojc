@@ -1,33 +1,44 @@
-/* Global body styling */
+/* 🌐 Global Styles */
 body {
   font-family: Arial, sans-serif;
   background-color: #f4f4f4;
   padding: 30px;
+  margin: 0;
 }
 
-/* Main container */
+/* 🧱 Main Container */
 .container {
   background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 800px;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 900px;
   margin: auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Headings */
+/* 🏷️ Headings */
 h2, h3 {
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
-/* File input */
+h2 {
+  font-size: 22px;
+}
+
+h3 {
+  font-size: 18px;
+  margin-top: 25px;
+}
+
+/* 📁 File Input */
 input[type="file"] {
   display: block;
   margin: 15px 0;
+  padding: 6px;
 }
 
-/* Buttons */
+/* 🔘 Buttons */
 button {
   padding: 10px 16px;
   background-color: #007bff;
@@ -53,59 +64,75 @@ button:disabled {
   cursor: not-allowed;
 }
 
-button:disabled:hover {
-  background-color: #d6d6d6;
-}
-
-/* Output text block */
-pre, #output {
+/* 🧾 Output Section */
+pre,
+#output {
   margin-top: 20px;
   background: #f9f9f9;
   padding: 15px;
   border: 1px solid #ddd;
   border-radius: 6px;
   overflow-x: auto;
+  font-size: 14px;
+  white-space: pre-wrap;
 }
 
-/* Cluster details block */
+/* 🧩 Cluster Details */
 #clusterDetails {
   margin-top: 20px;
   background: #f9f9f9;
   padding: 20px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 8px;
   white-space: normal;
+  word-break: break-word;
 }
 
-/* Per-item display inside clusterDetails */
-#clusterDetails .item-block {
+/* 📦 Individual Item Blocks */
+.item-block {
   border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 10px;
-  margin-top: 12px;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 15px;
   background-color: #fff;
+  transition: box-shadow 0.2s ease;
 }
 
-/* Description block (no clamp) */
-.clamp-container {
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin-bottom: 10px;
-  overflow: visible;
-  max-height: none;
+.item-block:hover {
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.15);
 }
 
-.clamp-text {
-  white-space: pre-wrap;
-  word-break: break-word;
+/* ✏️ Editable Fields */
+.editable {
+  border: 1px solid #ddd;
+  padding: 6px;
+  border-radius: 4px;
+  background-color: #fff;
+  min-height: 25px;
+  margin-top: 4px;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
-/* Hide toggle link since it's not needed */
-.toggle-link {
-  display: none;
+.editable:focus {
+  border-color: #007bff;
+  background-color: #f0f8ff;
 }
 
-/* Image styling */
+/* 🗒️ Comment Fields */
+textarea.comment-field {
+  width: 100%;
+  resize: vertical;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 6px;
+  margin-top: 6px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+/* 🖼️ Image Preview */
 img {
   max-width: 150px;
   margin-top: 8px;
@@ -113,9 +140,30 @@ img {
   border: 1px solid #ddd;
 }
 
-/* Action buttons: hidden by default */
+/* 🧭 Button Visibility */
 #acceptBtn,
 #rejectBtn,
 #closeBtn {
   display: none;
+}
+
+/* ✅ Section Labels */
+strong {
+  color: #222;
+}
+
+/* 🧩 Responsive */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  button {
+    display: block;
+    margin-bottom: 10px;
+  }
 }

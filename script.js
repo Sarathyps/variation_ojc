@@ -36,6 +36,10 @@ document.getElementById('uploadBtn').addEventListener('click', () => {
       row.forEach((value, idx) => {
         obj[headers[idx].trim()] = value?.toString().trim();
       });
+
+      // Normalize field names for safety
+      obj.parent_sku = obj.parent_sku || obj.ParentSKU || obj['Parent SKU'] || '';
+
       return obj;
     });
 
@@ -49,6 +53,7 @@ document.getElementById('uploadBtn').addEventListener('click', () => {
       if (!grouped[id]) {
         grouped[id] = {
           product_id: id,
+          parent_sku: row.parent_sku || '',
           ai_web_title: row.ai_web_title || '',
           ai_amzn_title: row.ai_amzn_title || '',
           ai_desc: row.ai_desc || '',
@@ -85,7 +90,8 @@ function showCluster() {
   const cluster = clusters[currentClusterIndex];
 
   let detailsHTML = `
-    <strong>Product ID:</strong> ${cluster.product_id}<br><br>
+    <strong>Product ID:</strong> ${cluster.product_id}<br>
+    <strong>Parent SKU:</strong> ${cluster.parent_sku}<br><br>
 
     <strong>AI Web Title:</strong><br>
     <div id="webTitle" contenteditable="true" class="editable">${cluster.ai_web_title}</div><br>
@@ -194,17 +200,20 @@ function nextCluster() {
 }
 
 document.getElementById('closeBtn').addEventListener('click', () => {
+  // 1️⃣ Save updated "Actions" back to original file
   const updatedWorkbook = XLSX.utils.book_new();
   const updatedSheet = XLSX.utils.json_to_sheet(originalRows, { header: headers });
   XLSX.utils.book_append_sheet(updatedWorkbook, updatedSheet, 'Updated Data');
   XLSX.writeFile(updatedWorkbook, 'Updated_Input_With_Actions.xlsx');
 
+  // 2️⃣ Create "Approved" and "Rejected" sheets
   const flattenClusters = (clusterList) => {
     const flat = [];
     clusterList.forEach(cluster => {
       cluster.items.forEach(item => {
         flat.push({
           product_id: cluster.product_id,
+          parent_sku: cluster.parent_sku || '',
           ai_web_title: cluster.ai_web_title,
           ai_amzn_title: cluster.ai_amzn_title,
           ai_desc: cluster.ai_desc,
@@ -225,6 +234,7 @@ document.getElementById('closeBtn').addEventListener('click', () => {
   XLSX.utils.book_append_sheet(outputWorkbook, rejectedSheet, 'Rejected');
   XLSX.writeFile(outputWorkbook, 'Approved_and_Rejected.xlsx');
 
+  // 3️⃣ Auto-close after saving
   setTimeout(() => {
     window.close();
   }, 2000);
